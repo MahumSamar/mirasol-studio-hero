@@ -328,7 +328,7 @@ const isMobile = () => innerWidth < 820;
 const PAL = {
   /* final = base(bg) * (vignette-stack + output*.35): bg sets the hot coral near the pointer,
      vignette sets the plum edges, output lifts the streaks */
-  bg: '#ff8a7a', vignette: '#293367', output: '#6a2048', outputMix: .95, edge: -.82,
+  bg: '#86ead6', vignette: '#06252c', output: '#0f6b66', outputMix: .95, edge: -.82,
   dots: '#140e17'
 };
 
@@ -576,15 +576,15 @@ function addModel({ geometry, tint, position, positionMobile, scale, scaleMobile
 const helloG = helloGeometry();
 const helloSpan = (() => { helloG.computeBoundingBox(); return helloG.boundingBox.max.x - helloG.boundingBox.min.x; })();
 /* hello: 15.3 world units wide on desktop (matches the mockup's 865/1440) */
-addModel({ geometry: helloG, tint: ['#fff0ea', '#ffc4c0'], position: [-.1, .7, 2], positionMobile: [0, .4, 2],
+addModel({ geometry: helloG, tint: ['#effffb', '#9fe8d8'], position: [-.1, .7, 2], positionMobile: [0, .4, 2],
   scale: 15.3 / helloSpan, scaleMobile: 15.3 / helloSpan * 19 / 22, before: [0, 240, 0], rotation: [0, 4, 0], after: [0, 90, 0] });
-addModel({ geometry: sparkleGeometry(), tint: ['#ffffff', '#d9d2e6'], position: [-6.9, 3.9, 1], positionMobile: [-4.6, 3.9, 1],
+addModel({ geometry: sparkleGeometry(), tint: ['#ffffff', '#d4e2e0'], position: [-6.9, 3.9, 1], positionMobile: [-4.6, 3.9, 1],
   scale: .82, scaleMobile: .62, before: [0, 0, 0], rotation: [0, -14, 8], after: [0, 360, 0], tilt: [0, 0, 0] });
-addModel({ geometry: recentre(new THREE.CapsuleGeometry(.5, 1.3, 10, 28).rotateZ(deg(110))), tint: ['#ffd2c2', '#ff9a84'], position: [6.3, 3.35, 0], positionMobile: [4.7, 3.7, 0],
+addModel({ geometry: recentre(new THREE.CapsuleGeometry(.5, 1.3, 10, 28).rotateZ(deg(110))), tint: ['#c8f6ea', '#38c4a4'], position: [6.3, 3.35, 0], positionMobile: [4.7, 3.7, 0],
   scale: 1, scaleMobile: .75, before: [0, 0, 0], rotation: [0, 0, 0], after: [0, 0, 180] });
-addModel({ geometry: new THREE.SphereGeometry(.76, 48, 32), tint: ['#fff6f4', '#ffcfd6'], position: [9.7, -.1, .5], positionMobile: [5.2, -2.8, .5],
+addModel({ geometry: new THREE.SphereGeometry(.76, 48, 32), tint: ['#f6fffd', '#d4f6ee'], position: [9.7, -.1, .5], positionMobile: [5.2, -2.8, .5],
   scale: 1, scaleMobile: .75, before: [0, 0, 0], rotation: [0, 0, 0] });
-addModel({ geometry: cursorGeometry(), tint: ['#ffe0e4', '#ff9eac'], position: [8.9, -2.95, -1], positionMobile: [3.6, -5.2, -1],
+addModel({ geometry: cursorGeometry(), tint: ['#e4fbf5', '#6fd8c0'], position: [8.9, -2.95, -1], positionMobile: [3.6, -5.2, -1],
   scale: .58, scaleMobile: .46, before: [0, 0, 0], rotation: [0, 10, 8], after: [0, 720, 0], tilt: [0, 0, 45] });
 
 /* =====================================================================
@@ -615,7 +615,7 @@ const dots = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), dotMat); dots.frustum
       pointer stops, on phones, with reduced motion, and once the dots are
       solid — there a 16px dot trail follows the pointer instead.
    ===================================================================== */
-const FL = { strength: 1, splatRadius: .003, force: 3000, chroma: .5, iterations: 4, dissipation: 3, simRes: 160, trailPx: 16, trailColor: '#ff8466' };
+const FL = { strength: 1, splatRadius: .003, force: 3000, chroma: .5, iterations: 4, dissipation: 3, simRes: 160, trailPx: 16, trailColor: '#5fe0c4' };
 const sceneRT = new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, depthBuffer: true });
 const simRT = () => new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, depthBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
 const F = { velA: simRT(), velB: simRT(), curl: simRT(), vort: simRT(), div: simRT(), pA: simRT(), pB: simRT(), proj: simRT() };
@@ -647,16 +647,16 @@ const advM = fmat(`varying vec2 vUv; uniform vec2 uTexel; uniform sampler2D uVel
 const trail = Array.from({ length: 16 }, () => new THREE.Vector2(.5, .5)), trailStr = new Array(16).fill(0), lastCell = new THREE.Vector2(-1, -1);
 const displayM = fmat(`varying vec2 vUv; uniform sampler2D tScene, uVel; uniform vec2 uSim, uRes; uniform float uStrength, uChroma, uOn;
   uniform vec2 uTrail[16]; uniform float uTrailStr[16]; uniform vec3 uTrailColor; uniform float uTrailOn, uCellPx;
-  /* warm palette ramp instead of a full rainbow: peach -> pink -> coral (linear values) */
+  /* palette ramp instead of a full rainbow: pale aqua -> seafoam -> teal (linear values) */
   vec3 ramp(float x){
-    vec3 peach = vec3(1.0, .63, .52), pink = vec3(1.0, .30, .46), coral = vec3(1.0, .25, .16);
-    return x < .5 ? mix(peach, pink, x * 2.0) : mix(pink, coral, x * 2.0 - 1.0);
+    vec3 aqua = vec3(.62, 1.0, .9), foam = vec3(.25, .95, .62), teal = vec3(.04, .62, .55);
+    return x < .5 ? mix(aqua, foam, x * 2.0) : mix(foam, teal, x * 2.0 - 1.0);
   }
   void main(){
     vec2 disp = texture2D(uVel, vUv).xy / max(uSim, vec2(1.0)) * uStrength * uOn; float m = length(disp);
-    /* same 4-tap smear along the flow; channel weights kept warm (red leads, blue trails least) so fringes read pink, never blue */
+    /* same 4-tap smear along the flow; green leads and red trails least, so fringes read aqua-teal */
     vec3 c = vec3(0.0), ws = vec3(0.0);
-    for (int i = 0; i < 4; i++) { float t = float(i) / 3.0; vec3 w = vec3(1.0 - .25 * t, .55 + .45 * (1.0 - abs(t - .5) * 2.0), .7 + .3 * t);
+    for (int i = 0; i < 4; i++) { float t = float(i) / 3.0; vec3 w = vec3(.55 + .45 * (1.0 - abs(t - .5) * 2.0), 1.0 - .2 * t, .75 + .25 * t);
       c += texture2D(tScene, clamp(vUv - disp * .3 * (t + .3) * m, 0.0, 1.0)).rgb * w; ws += w; }
     c /= max(ws, vec3(1e-4));
     c += ramp(clamp(sin(m * 2.0) * .5 + .5, 0.0, 1.0)) * smoothstep(.2, .8, m) * .5 * uChroma * uOn;
