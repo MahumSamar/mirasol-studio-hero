@@ -16,14 +16,14 @@
   --ux: calc(100vw / 1440);
   --u: min(calc(100vw / 1440), calc(100vh / 900));
   --ink:#fff;
-  --plum:#140e17;
-  --grey:#8d8693;
+  --plum:#091618;
+  --grey:#87999a;
   --line:rgba(255,255,255,.13);
   --sans:"Inter",system-ui,sans-serif;
   --wide:"Archivo Wide","Archivo",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,monospace;
   --plate:url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261105_170329_17b697c0-cf6f-4edc-bcaa-7615f2f1eabb.png&w=2400&q=85");
-  --portrait:url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261105_170338_2936b01b-bc86-4804-9f4c-06d316493de2.png&w=900&q=85");
+  --portrait:url("https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261106_072427_1c6c0843-2189-4e71-8462-58232b961bde.png&w=900&q=85");
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--plum);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
@@ -94,16 +94,16 @@ main{position:relative;z-index:1}
 .d1{left:calc(303*var(--ux));top:calc(626*var(--u))}
 .d2{left:calc(1004*var(--ux));top:calc(712*var(--u))}
 .portrait{left:calc(62*var(--ux));top:calc(179*var(--u));width:calc(321*var(--u));height:calc(323*var(--u));
-  background:var(--portrait) 50% 30%/cover no-repeat #3a1f2c}
-.sig{left:calc(34*var(--ux));top:calc(172*var(--u));font-family:"Ms Madi",cursive;font-size:calc(112*var(--u));line-height:1;color:#ff8466;padding:0 calc(10*var(--u));
+  background:var(--portrait) 50% 30%/cover no-repeat #12302f}
+.sig{left:calc(34*var(--ux));top:calc(172*var(--u));font-family:"Ms Madi",cursive;font-size:calc(112*var(--u));line-height:1;color:#7aeed6;padding:0 calc(10*var(--u));
   transform:rotate(-17deg);transform-origin:0 50%;white-space:nowrap;
-  text-shadow:0 0 calc(1.5*var(--u)) #ff6b47,0 0 calc(7*var(--u)) #ff5a36,0 0 calc(18*var(--u)) rgba(255,90,54,.55)}
+  text-shadow:0 0 calc(1.5*var(--u)) #2fdcbc,0 0 calc(7*var(--u)) #16c6a4,0 0 calc(18*var(--u)) rgba(22,198,164,.55)}
 .statement{left:calc(509*var(--ux));top:calc(166*var(--u));font-size:calc(55.5*var(--u));line-height:calc(61*var(--u));font-weight:400;letter-spacing:-.005em}
 .statement span{display:block;white-space:nowrap}
 .history{left:calc(509*var(--ux));top:calc(453*var(--u));font-size:calc(55.5*var(--u));line-height:calc(61*var(--u));font-weight:400;letter-spacing:-.005em;color:var(--grey)}
 .history span{display:block;white-space:nowrap}
 .history a{color:#fff;background:linear-gradient(currentColor,currentColor) 0 calc(100% - 2*var(--u))/100% calc(3*var(--u)) no-repeat;transition:background-size .45s cubic-bezier(.2,.7,.2,1),color .3s}
-.history a:hover{background-size:0 calc(3*var(--u));background-position:100% calc(100% - 2*var(--u));color:#ffd2c4}
+.history a:hover{background-size:0 calc(3*var(--u));background-position:100% calc(100% - 2*var(--u));color:#b8f4e6}
 
 /* ---------- entrance guard ---------- */
 .anim .a{opacity:0}
@@ -190,7 +190,7 @@ design tools for team efficiency.</p>
         <b class="c1 r2"></b><b class="c2 r1"></b><b class="c2 r2"></b><b class="c4 r1"></b><b class="c4 r2"></b><b class="c3 r3"></b><b class="c2 r3"></b>
       </div>
       <div class="dots d1"></div><div class="dots d2"></div>
-      <div class="portrait b" data-e="card" role="img" aria-label="Portrait of Mira Sol in warm sunset light"></div>
+      <div class="portrait b" data-e="card" role="img" aria-label="Portrait of Mira Sol in cool teal light"></div>
       <div class="sig b" data-e="sig" aria-hidden="true">Mira</div>
       <p class="statement">
         <span class="b" data-e="row">I shape how teams and AI work</span>
@@ -265,9 +265,14 @@ design tools for team efficiency.</p>
   const aboutTl = () => {
     if (aboutDone) return; aboutDone = true;
     const card = document.querySelector('[data-e="card"]');
-    card.animate([{opacity:0, clipPath:'inset(100% 0 0 0)', transform:'translateY(20px)'},{opacity:1, clipPath:'inset(0 0 0 0)', transform:'none'}], {duration:1100, easing:ease, fill:'both'});
+    /* clip-path reveals: when done, drop the finished animation and set the end state inline,
+       otherwise the GPU compositor can keep a stale copy of the card painted over the WebGL canvas */
+    const settle = (el, anim, end) => anim.finished.then(() => { Object.assign(el.style, end); anim.cancel(); }).catch(() => {});
+    const cardAnim = card.animate([{opacity:0, clipPath:'inset(100% 0 0 0)', transform:'translateY(20px)'},{opacity:1, clipPath:'inset(0 0 0 0)', transform:'none'}], {duration:1100, easing:ease, fill:'both'});
+    settle(card, cardAnim, {opacity:'1', clipPath:'none', transform:'none'});
     const sig = document.querySelector('[data-e="sig"]');
-    sig.animate([{opacity:0, clipPath:'inset(-60% 100% -60% -20%)'},{opacity:.4, offset:.6},{opacity:1, clipPath:'inset(-60% -20% -60% -20%)'}], {duration:1300, delay:450, easing:'cubic-bezier(.55,.1,.3,1)', fill:'both'});
+    const sigAnim = sig.animate([{opacity:0, clipPath:'inset(-60% 100% -60% -20%)'},{opacity:.4, offset:.6},{opacity:1, clipPath:'inset(-60% -20% -60% -20%)'}], {duration:1300, delay:450, easing:'cubic-bezier(.55,.1,.3,1)', fill:'both'});
+    settle(sig, sigAnim, {opacity:'1', clipPath:'none'});
     sig.animate([{opacity:1},{opacity:.82},{opacity:1},{opacity:.9},{opacity:1}], {duration:4200, delay:1800, iterations:Infinity});
     document.querySelectorAll('[data-e="row"]').forEach((el,i) => el.animate([{opacity:0, transform:'translateY(22px)'},{opacity:1, transform:'none'}], {duration:1000, delay:150 + i*80, easing:ease, fill:'both'}));
   };
@@ -311,7 +316,7 @@ try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPrefere
 catch (e) { root.classList.add('no-gl'); throw e; }
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.toneMapping = THREE.NoToneMapping;
-renderer.setClearColor('#140e17', 1);
+renderer.setClearColor('#091618', 1);
 
 const clamp01 = v => Math.min(1, Math.max(0, v));
 const damp = (a, b, l, dt) => THREE.MathUtils.lerp(a, b, 1 - Math.exp(-l * dt));
@@ -329,7 +334,7 @@ const PAL = {
   /* final = base(bg) * (vignette-stack + output*.35): bg sets the hot coral near the pointer,
      vignette sets the plum edges, output lifts the streaks */
   bg: '#86ead6', vignette: '#06252c', output: '#0f6b66', outputMix: .95, edge: -.82,
-  dots: '#140e17'
+  dots: '#091618'
 };
 
 const scene = new THREE.Scene();
@@ -704,7 +709,7 @@ function resize() {
   passRes.set(pw, ph);
   rtRead?.dispose(); rtWrite?.dispose();
   rtRead = new THREE.WebGLRenderTarget(pw, ph, { depthBuffer: false }); rtWrite = new THREE.WebGLRenderTarget(pw, ph, { depthBuffer: false });
-  renderer.setRenderTarget(rtRead); renderer.setClearColor(PAL.bg, 1); renderer.clear(); renderer.setRenderTarget(null); renderer.setClearColor('#140e17', 1);
+  renderer.setRenderTarget(rtRead); renderer.setClearColor(PAL.bg, 1); renderer.clear(); renderer.setRenderTarget(null); renderer.setClearColor('#091618', 1);
   outputMat.uniforms.tInput.value = rtRead.texture;
   glassEnv.setSize(Math.floor(.5 * w * dpr), Math.floor(.5 * h * dpr));
   renderer.getDrawingBufferSize(screenPx);
